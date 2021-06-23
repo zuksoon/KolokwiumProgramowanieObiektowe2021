@@ -8,7 +8,6 @@ using System.IO;
 
 namespace KolokwiumProgramowanieObiektowe2021
 {
-    ///gdyby to był txt... było by milej
     class Owoc
     {
         public string Kolor { get; set; }
@@ -17,10 +16,9 @@ namespace KolokwiumProgramowanieObiektowe2021
     }
 
 
-    
-
     class Program
     {
+        public bool czyZerwac = true;
         public static void LadujJson()
         {
             using (StreamReader r = new StreamReader("drzewo.json"))
@@ -40,9 +38,51 @@ namespace KolokwiumProgramowanieObiektowe2021
             }
         }
 
+        public static bool ZerwijOwoc()
+        {
+            Random rnd = new Random() ;
+            int losowaLiczba;
+            using (StreamReader r = new StreamReader("drzewo.json"))
+            {
+                string json = r.ReadToEnd();
+                List<Owoc> items = JsonConvert.DeserializeObject<List<Owoc>>(json);
+
+                losowaLiczba = rnd.Next(0, items.Count());
+                if (items[losowaLiczba].Wielkosc == 420)
+                {
+                    Console.WriteLine("Zerwałeś granat - uciekaj !");
+                    return false;
+                }
+                if (items[losowaLiczba].Wielkosc < 100)
+                {
+                    Console.WriteLine("Doszło do zatrucia ! :( ");
+                    return false;
+                }
+                if (items[losowaLiczba].Wielkosc >= 100)
+                {
+                    Console.WriteLine("Dobry dojrzały owoc - smacznego !");
+                    return true;
+                }
+                return false;
+            }
+
+        }
+
+
         static void Main(string[] args)
         {
             LadujJson();
+            while (true)
+            {
+                string komenda = Console.ReadLine();
+                if (komenda.Equals("zerwij_owoc"))
+                {
+                    bool dobry = ZerwijOwoc();
+                    if (!dobry) { break; }
+                }
+                else { break; }
+            }
+            Console.WriteLine("Koniec programu");
             Console.ReadLine();
         }
     }
